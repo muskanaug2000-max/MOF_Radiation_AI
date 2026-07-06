@@ -1,0 +1,4 @@
+MOF_name,metal,radiation_type,dose_kGy,stability
+UiO-66,Zr,Gamma,1000,0.95
+ZIF-8,Zn,Gamma,1000,0.80
+MOF-5,Zn,Electron,500,0.40
