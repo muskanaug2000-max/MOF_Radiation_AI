@@ -1,4 +1,7 @@
 import pandas as pd
-df = pd.read_csv("data/mof_radiation.csv")
-print("MOF Radiation Dataset")
-print(df)
+
+def load_data():
+    df = pd.read_csv("data/mof_radiation.csv")
+    print(df.head())
+    print("\nDataset Shape:", df.shape)
+    return df

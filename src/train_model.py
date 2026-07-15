@@ -1,34 +1,56 @@
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
 
-# Load dataset
-df = pd.read_csv("data/mof_radiation.csv")
 
-print("Dataset:")
-print(df)
+def train(df):
 
-# Convert text to numbers
-df["Metal"] = df["metal"].map({"Zr": 0, "Zn": 1})
-df["Radiation"] = df["radiation_type"].map({"Gamma": 0, "Electron": 1})
+    df = df.fillna("Unknown")
 
-# Features (X)
-X = df[["Metal", "Radiation", "dose_kGy"]]
+    encoders = {}
 
-# Target (y)
-y = df["stability"]
+    categorical = [
+        "MOF",
+        "Metal",
+        "Linker",
+        "Radiation Type",
+        "Source",
+        "Atmosphere",
+        "Stability"
+    ]
 
-# Train model
-model = RandomForestRegressor(n_estimators=100, random_state=42)
-model.fit(X, y)
+    for col in categorical:
+        if col in df.columns:
+            le = LabelEncoder()
+            df[col] = le.fit_transform(df[col].astype(str))
+            encoders[col] = le
 
-print("\nModel trained successfully!")
+    X = df[[
+        "MOF",
+        "Metal",
+        "Radiation Type"
+    ]]
 
-# Predict a new MOF
-new_sample = pd.DataFrame({
-    "Metal": [0],
-    "Radiation": [0],
-    "dose_kGy": [800]
-})
+    y = df["Stability"]
 
-prediction = model.predict(new_sample)
-print(f"\nPredicted Stability = {prediction[0]:.3f}")
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42
+    )
+
+    model = RandomForestClassifier(
+        n_estimators=100,
+        random_state=42
+    )
+
+    model.fit(X_train, y_train)
+
+    pred = model.predict(X_test)
+
+    print("Accuracy:", accuracy_score(y_test, pred))
+
+    return model

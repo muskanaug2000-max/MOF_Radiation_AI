@@ -1,6 +1,10 @@
-print("Hello Muskan!")
+from src.read_data import load_data
+from src.train_model import train
 
-mof = "UiO-66"
-radiation = "Gamma"
+df = load_data()
 
-print(f"Studying {mof} under {radiation} radiation")
+print(df.head())
+
+print("Dataset Shape:", df.shape)
+
+model = train(df)
